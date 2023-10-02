@@ -42,6 +42,7 @@ const corsOptions = {
     credentials: true,
     exposedHeaders: 'Authorization, Content-Type, X-Total-Count',
 };
+console.log(corsOptions.origin)
 app.use(cors(corsOptions));
 
 app.get('/', (req, res) => {
