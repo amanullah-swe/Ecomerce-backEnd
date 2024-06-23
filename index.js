@@ -42,8 +42,61 @@ const corsOptions = {
     credentials: true,
     exposedHeaders: 'Authorization, Content-Type, X-Total-Count',
 };
-console.log(corsOptions.origin)
 app.use(cors(corsOptions));
+
+// Set up storage engine using multer
+const storage = multer.diskStorage({
+    destination: './uploads/',
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+// Initialize upload variable with multer settings
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 50000000 * 100 }, // 50MB file size limit
+    fileFilter: function (req, file, cb) {
+        checkFileType(file, cb);
+    }
+});
+
+// Check file type function
+function checkFileType(file, cb) {
+    // Allowed file extensions
+    const filetypes = /jpeg|jpg|png/;
+    // Check extension
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    // Check mime type
+    const mimetype = filetypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+        return cb(null, true);
+    } else {
+        cb('Error: Invalid file type!');
+    }
+}
+// Route to handle file upload along with other data
+app.post('/upload', upload.single('image'), (req, res) => {
+    console.log('Request Body:', req.body); // Access other form data
+    console.log('Uploaded File:', req.file); // Access uploaded file
+
+    if (req.file) {
+        res.status(200).json({
+            success: true,
+            message: 'File uploaded!',
+            file: `uploads/${req.file.filename}`,
+            formData: req.body // Include other form data in the response
+        });
+    } else {
+        res.status(400).json({ success: false, message: 'No file uploaded or invalid file type!' });
+    }
+});
+
+
+
+
+
 
 app.get('/', (req, res) => {
     res.send({ messagge: 'success' });
