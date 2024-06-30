@@ -16,10 +16,17 @@ import userRouter from './routes/user.js'
 import orderRouter from './routes/order.js'
 import authRouter from './routes/auth.js';
 import paymentRoute from './routes/payments.mjs'
+import multer from 'multer'
+import path from 'path'
+import { upload } from './middleware/multerMidelWare.js';
+import { fileURLToPath } from 'url';
 
 const app = express()
 const port = process.env.PORT;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 main();
@@ -44,59 +51,30 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// Set up storage engine using multer
-const storage = multer.diskStorage({
-    destination: './uploads/',
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-});
-
-// Initialize upload variable with multer settings
-const upload = multer({
-    storage: storage,
-    limits: { fileSize: 50000000 * 100 }, // 50MB file size limit
-    fileFilter: function (req, file, cb) {
-        checkFileType(file, cb);
-    }
-});
-
-// Check file type function
-function checkFileType(file, cb) {
-    // Allowed file extensions
-    const filetypes = /jpeg|jpg|png/;
-    // Check extension
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    // Check mime type
-    const mimetype = filetypes.test(file.mimetype);
-
-    if (mimetype && extname) {
-        return cb(null, true);
-    } else {
-        cb('Error: Invalid file type!');
-    }
-}
-// Route to handle file upload along with other data
-app.post('/upload', upload.single('image'), (req, res) => {
-    console.log('Request Body:', req.body); // Access other form data
-    console.log('Uploaded File:', req.file); // Access uploaded file
-
-    if (req.file) {
-        res.status(200).json({
-            success: true,
-            message: 'File uploaded!',
-            file: `uploads/${req.file.filename}`,
-            formData: req.body // Include other form data in the response
-        });
-    } else {
-        res.status(400).json({ success: false, message: 'No file uploaded or invalid file type!' });
-    }
-});
+// Derive __dirname from import.meta.url
 
 
 
+// for testing only 
+// app.post('/upload', upload.array('image', 5), (req, res) => {
+//     // console.log('Request Body:', req.body); // Access other form data
+//     // console.log('Uploaded File:', req.file); // Access uploaded file
+//     const imagesResponse = [];
+//     if (req.files && req.files.length > 0) {
+//         const uploadedFiles = req.files.map(file => `uploads/${file.filename}`);
 
-
+//         const Tempres = {
+//             success: true,
+//             message: 'Files uploaded!',
+//             files: uploadedFiles,
+//             formData: req.body // Include other form data in the response
+//         }
+//         imagesResponse.push(Tempres);
+//         res.status(200).json(imagesResponse);
+//     } else {
+//         res.status(400).json({ success: false, message: 'No files uploaded or invalid file type!' });
+//     }
+// });
 
 app.get('/', (req, res) => {
     res.send({ messagge: 'success' });

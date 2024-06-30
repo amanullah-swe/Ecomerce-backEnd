@@ -3,6 +3,24 @@ import Product from "../models/productShema.js";
 //CREATE
 export const createProduct = async (req, res) => {
     try {
+
+        const imagesResponse = [];
+        if (req.files && req.files.length > 0) {
+            const uploadedFiles = req.files.map(file => `uploads/${file.filename}`);
+
+            const Tempres = {
+                success: true,
+                message: 'Files uploaded!',
+                files: uploadedFiles,
+                formData: req.body // Include other form data in the response
+            }
+            imagesResponse.push(Tempres);
+            res.status(200).json(imagesResponse);
+        } else {
+            res.status(400).json({ success: false, message: 'No files uploaded or invalid file type!' });
+        }
+
+        // temp not
         const product = new Product(req.body);
         const savedProduct = await product.save();
         res.status(200).send(savedProduct);
@@ -84,9 +102,36 @@ export const readAllProducts = async (req, res) => {
 
 //UPDATE
 export const updateProduct = async (req, res) => {
+    /*  NOTE:-
+            1) use can send the all the data new 
+            2) user can send the thumbnail new and the other images as same path
+            3) when some thing is updating then we will get that image as the file object 
+            4) or else we get the images in the request body 
+            5) how can we know that which image is updated and which is not 
+
+            we have to fix this issue in the future
+            6) we have to delet the images also
+
+
+    */
     try {
         const id = req.params.id;
         const product = req.body;
+        let uploadedFiles = []
+        const imagesResponse = [];
+        console.log(req.files);
+        console.log(req.body)
+        if (req.files.images && req.files.images.length > 0) {
+            uploadedFiles = req.files.images.map(file => `uploads/${file.filename}`);
+        } else {
+            res.status(400).json({ success: false, message: 'No files uploaded or invalid file type!' });
+            return;
+        }
+        product.thumbnail = req.files.thumbnail.map(file => `uploads/${file.filename}`)[0];
+        product.images = uploadedFiles;
+
+
+
         const updatedProduct = await Product.findByIdAndUpdate(id, product, { new: true });
         if (!updatedProduct) {
             res.status(404).send("Product not found.");
@@ -94,7 +139,8 @@ export const updateProduct = async (req, res) => {
             res.status(200).send(updatedProduct);
         }
     } catch (error) {
-        res.status(400).send(error);
+        console.log(error);
+        res.status(500).send({ message: "error occure", error: error });
     }
 }
 
