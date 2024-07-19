@@ -3,9 +3,7 @@ import multer from "multer";
 import path from 'path';
 export const tempDir = 'tmp/';
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, '/tmp');
-    },
+    destination: "/tmp/",
     filename: function (req, file, cb) {
         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     }
