@@ -18,7 +18,7 @@ router.get("/:id", readProduct);
 router.get("/", readAllProductsByFilter);
 
 // Create a new product.
-router.post("/", authMiddleware, adminRoleMiddleware, createProduct);
+router.post("/", authMiddleware, adminRoleMiddleware, uploadFields, createProduct);
 
 // Update a product.
 router.patch("/:id", authMiddleware, adminRoleMiddleware, uploadFields, updateProduct);

@@ -5,24 +5,24 @@ const ProductSchema = new mongoose.Schema({
     title: {
         required: true,
         type: String,
-        minLength: 5,
-        maxLength: 100,
-        errorMessage: "Title must be between 5 and 100 characters long."
+        // minLength: 5,
+        // maxLength: 100,
+        // errorMessage: "Title must be between 5 and 100 characters long."
     },
     description: {
         type: String,
-        minLength: 10
+        // minLength: 10
     },
     price: {
         type: Number,
         required: true,
-        minimum: 0,
+        // minimum: 0,
         errorMessage: "Price must be a number greater than or equal to 0."
     },
     discountPercentage: {
         type: Number,
-        minimum: 0,
-        maximum: 100,
+        // minimum: 0,
+        // maximum: 100,
         errorMessage: "Discount percentage must be between 0 and 100."
     },
     rating: {
@@ -34,19 +34,19 @@ const ProductSchema = new mongoose.Schema({
     stock: {
         type: Number,
         required: true,
-        minimum: 0,
-        errorMessage: "Stock must be a number greater than or equal to 0."
+        // minimum: 0,
+        // errorMessage: "Stock must be a number greater than or equal to 0."
     },
     brand: {
         type: String,
-        minLength: 3,
-        maxLength: 50,
+        // minLength: 3,
+        // maxLength: 50,
         errorMessage: "Brand must be between 3 and 50 characters long."
     },
     category: {
         type: String,
-        minLength: 3,
-        maxLength: 50,
+        // minLength: 3,
+        // maxLength: 50,
         errorMessage: "Category must be between 3 and 50 characters long."
     },
     thumbnail: {

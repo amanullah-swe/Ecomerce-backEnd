@@ -4,16 +4,33 @@ import Cart from "../models/cartSchema.js";
 //CREATE
 export const createCartItem = async (req, res) => {
     const { product, user, quantity } = req.body;
+
+    // Validate the required fields
+    if (!product || !user || !quantity) {
+        return res.status(400).json({
+            success: false,
+            error: "Product, user, and quantity are required fields."
+        });
+    }
+
     try {
-        const item = new Cart({ product: product, user: user, quantity: quantity });
+        const item = new Cart({ product, user, quantity });
         const savedItem = await item.save();
         const populateItems = await Cart.findById(savedItem.id).populate('user').populate('product').exec();
-        res.status(200).send(populateItems);
+
+        res.status(200).json({
+            success: true,
+            data: populateItems
+        });
     } catch (error) {
         console.log(error);
-        res.status(400).send(error);
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
     }
-}
+};
+
 
 //READ
 export const readCartItem = async (req, res) => {
