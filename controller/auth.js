@@ -26,7 +26,7 @@ export const register = async (req, res) => {
         }
         let filepath = ""
         if (req.file) {
-            filepath = "uploads/" + req.file.filename;
+            filepath = "tmp/" + req.file.filename;
         }
         // Hash the password before saving it
         const saltRounds = 10;

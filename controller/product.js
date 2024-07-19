@@ -177,6 +177,7 @@ export const updateProduct = async (req, res) => {
 
         product.images = uploadedFiles;
 
+
         // Update product in the database
         const updatedProduct = await Product.findByIdAndUpdate(id, product, { new: true });
 
