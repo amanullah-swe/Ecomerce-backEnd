@@ -1,3 +1,4 @@
+import { tempDir } from "../middleware/multerMidelWare.js";
 import Product from "../models/productShema.js";
 
 //CREATE
@@ -25,13 +26,14 @@ export const createProduct = async (req, res) => {
 
         // Check and set thumbnail file path
         if (files?.thumbnail && files.thumbnail[0]) {
-            product.thumbnail = `uploads/${files.thumbnail[0].filename}`;
-        }
+            product.thumbnail = tempDir + files.thumbnail[0].filename;
+        };
+
 
         // Handle images
         if ((files?.images?.length > 0) || (product?.images?.length > 0)) {
             if (files?.images?.length > 0) {
-                uploadedFiles = files.images.map(file => `uploads/${file.filename}`);
+                uploadedFiles = files.images.map(file => tempDir + file.filename);
             }
             if (product?.images?.length > 0) {
                 uploadedFiles = [...uploadedFiles, ...product.images];
@@ -158,13 +160,13 @@ export const updateProduct = async (req, res) => {
 
         // Check and set thumbnail file path
         if (files?.thumbnail && files.thumbnail[0]) {
-            product.thumbnail = `uploads/${files.thumbnail[0].filename}`;
+            product.thumbnail = tempDir + files.thumbnail[0].filename;
         }
 
         // Handle images
         if ((files?.images?.length > 0) || (product?.images?.length > 0)) {
             if (files?.images?.length > 0) {
-                uploadedFiles = files.images.map(file => `uploads/${file.filename}`);
+                uploadedFiles = files.images.map(file => tempDir + file.filename);
             }
             if (product?.images?.length > 0) {
                 uploadedFiles = [...uploadedFiles, ...product.images];
