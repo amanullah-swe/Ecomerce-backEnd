@@ -7,12 +7,12 @@ export const readUser = async (req, res) => {
     try {
         const id = req.userId;
         const user = await User.findById(id);
-        const { email, name, addresses, _id, role } = user
+        const { email, name, addresses, _id, role, profileImage } = user
         if (!user) {
             res.status(404).send("user not found.");
         } else {
             delete user.password;
-            res.status(200).send({ email, name, addresses, id: _id, role });
+            res.status(200).send({ email, name, addresses, id: _id, role, profileImage });
         }
     } catch (error) {
         res.status(400).send(error);

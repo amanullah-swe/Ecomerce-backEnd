@@ -16,10 +16,17 @@ import userRouter from './routes/user.js'
 import orderRouter from './routes/order.js'
 import authRouter from './routes/auth.js';
 import paymentRoute from './routes/payments.mjs'
+import multer from 'multer'
+import path from 'path'
+import { upload } from './middleware/multerMidelWare.js';
+import { fileURLToPath } from 'url';
 
 const app = express()
 const port = process.env.PORT;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 main();
@@ -42,8 +49,32 @@ const corsOptions = {
     credentials: true,
     exposedHeaders: 'Authorization, Content-Type, X-Total-Count',
 };
-console.log(corsOptions.origin)
 app.use(cors(corsOptions));
+
+// Derive __dirname from import.meta.url
+
+
+
+// for testing only 
+// app.post('/upload', upload.array('image', 5), (req, res) => {
+//     // console.log('Request Body:', req.body); // Access other form data
+//     // console.log('Uploaded File:', req.file); // Access uploaded file
+//     const imagesResponse = [];
+//     if (req.files && req.files.length > 0) {
+//         const uploadedFiles = req.files.map(file => `uploads/${file.filename}`);
+
+//         const Tempres = {
+//             success: true,
+//             message: 'Files uploaded!',
+//             files: uploadedFiles,
+//             formData: req.body // Include other form data in the response
+//         }
+//         imagesResponse.push(Tempres);
+//         res.status(200).json(imagesResponse);
+//     } else {
+//         res.status(400).json({ success: false, message: 'No files uploaded or invalid file type!' });
+//     }
+// });
 
 app.get('/', (req, res) => {
     res.send({ messagge: 'success' });
